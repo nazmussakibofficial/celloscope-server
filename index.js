@@ -41,9 +41,15 @@ async function run() {
         app.patch('/login/:id', async (req, res) => {
             const id = req.params.id;
             const currentUser = await usersCollection.findOne({ userId: id });
+            if (!currentUser) {
+                return res.send({ message: "User ID doesn't exist" })
+            }
             const password = req.body.password;
             bcrypt.compare(password, currentUser.hash, function (err, result) {
-                res.send(result)
+                if (result) {
+                    return res.send({ message: "Login Successful" })
+                }
+                res.send({ message: "Password Doesn't Match" })
             });
         })
 
