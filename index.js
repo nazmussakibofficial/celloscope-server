@@ -30,8 +30,8 @@ async function run() {
                         results: err
                     });
                 }
-                const { userId, mobileNo } = req.body;
-                const user = { userId, mobileNo, hash };
+                const { email, gender, mobileNo, selectedDate, userId, userName, isLoggedIn } = req.body;
+                const user = { email, gender, mobileNo, hash, selectedDate, userId, userName, isLoggedIn };
                 const result = await usersCollection.insertOne(user);
                 res.send(result);
             });
@@ -46,11 +46,19 @@ async function run() {
             }
             const password = req.body.password;
             bcrypt.compare(password, currentUser.hash, function (err, result) {
-                if (result) {
-                    return res.send({ message: "Login Successful" })
+                if (!result) {
+                    return res.send({ message: "Password Doesn't Match" })
                 }
-                res.send({ message: "Password Doesn't Match" })
+                res.send({ message: "Login Successful" });
             });
+            // const query = { userId: id }
+            // const updatedDoc = {
+            //     $set: {
+            //         isLoggedIn: true
+            //     }
+            // }
+            // const result = await usersCollection.updateOne(query, updatedDoc);
+
         })
 
         app.get('/users', async (req, res) => {
